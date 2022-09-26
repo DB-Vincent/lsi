@@ -7,3 +7,4 @@ edition = "2021"
 chrono = "0.4.22"
 clap = { version = "3.2.22", features = ["derive"] }
 libc = "0.2.133"
+users = "0.11.0"
