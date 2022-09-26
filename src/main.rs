@@ -10,6 +10,7 @@ use std::os::unix::fs::{MetadataExt, PermissionsExt};
 use clap::{Parser, ValueEnum};
 use chrono::{DateTime, Local};
 use users::{get_user_by_uid, get_group_by_gid};
+use colored::*;
 
 /// A *very* simple improvement on the already great ls-command.
 #[derive(Parser)]
@@ -79,21 +80,39 @@ fn run(opts: Opts) -> Result<(), Box<dyn Error>> {
                 .unwrap()
                 .to_str()
                 .unwrap();
-            let size = metadata.len();
-            let modified: DateTime<Local> = DateTime::from(metadata.modified()?);
-            let mode = metadata.permissions().mode();
-            let user = metadata.uid();
-            let group = metadata.gid();
 
             if (opts.all || !file_name.starts_with('.')) && (!opts.dirs_only || entry.is_dir()) && (!opts.files_only || !entry.is_dir()) {
+                let size = metadata.len();
+                let modified: DateTime<Local> = DateTime::from(metadata.modified()?);
+                let mode = metadata.permissions().mode();
+                let mode_short = format!("{:o}", mode);
+                let user = metadata.uid();
+                let group = metadata.gid();
+                let file_name_colored;
+
+                if entry.is_dir() {
+                    if file_name.starts_with(".") {
+                        file_name_colored = file_name.blue();
+                    } else {
+                        file_name_colored = file_name.blue().bold();
+                    }
+                } else {
+                    if file_name.starts_with(".") {
+                        file_name_colored = file_name.green();
+                    } else {
+                        file_name_colored = file_name.green().bold();
+                    }
+                };
+
                 println!(
-                    "{}   {}:{}   {}   {:>9}   {}",
+                    "{} ({})   {}:{}   {}   {:>9}   {}",
                     utils::parse_permissions(mode as u32),
+                    mode_short[mode_short.len() - 3..].to_string(),
                     get_user_by_uid(user).unwrap().name().to_string_lossy(),
                     get_group_by_gid(group).unwrap().name().to_string_lossy(),
                     modified.format("%_d %b %H:%M:%S").to_string(),
                     utils::convert(size as f64),
-                    file_name
+                    file_name_colored
                 );
             }
         }
