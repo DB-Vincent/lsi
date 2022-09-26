@@ -21,7 +21,6 @@ OPTIONS:
     -f, --files-only     Show only files
     -h, --help           Print help information
     -r, --reverse        Reverse the sorting result
-    -s, --sort <SORT>    Sort the resulting files and/or direcories in a specific way [default:
-                         name] [possible values: size, name]
+    -s, --sort <SORT>    Sort the resulting files and/or direcories in a specific way [default: name] [possible values: size, name]
     -V, --version        Print version information
 ```
